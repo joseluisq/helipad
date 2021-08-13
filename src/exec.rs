@@ -1,34 +1,26 @@
 use duct::{cmd, ReaderHandle};
-use std::collections::HashMap;
 use std::io::prelude::*;
 use std::io::BufReader;
 use std::io::Lines;
-use std::path::PathBuf;
 
-use crate::shell;
-use crate::Result;
+use crate::{shell, step::Step, Result};
 
 pub struct Exec {}
 
-pub struct Step {
-    pub workdir: PathBuf,
-    pub envs: HashMap<String, String>,
-}
-
 impl Exec {
     pub fn new() -> Self {
-        Exec {}
+        Self {}
     }
 
-    pub fn run(&self, step: Step, args: &[&str]) -> Result<Option<Lines<BufReader<ReaderHandle>>>> {
-        if args.is_empty() {
+    pub fn run(&self, step: Step, cmds: &[&str]) -> Result<Option<Lines<BufReader<ReaderHandle>>>> {
+        if cmds.is_empty() {
             return Ok(None);
         }
 
         let mut cmds = cmd!(
             shell::BIN,
             shell::ARGS,
-            format!("{} {}", shell::DEFAULTS, args.join(";"))
+            format!("{} {}", shell::DEFAULTS, cmds.join(";"))
         )
         .dir(step.workdir);
 

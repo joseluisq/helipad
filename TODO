@@ -1,0 +1,6 @@
+# Pipelines Executor
+
+- [x] Shell commands executor (SCE)
+- [ ] Pipelines support via an `executor.toml` support
+- [ ] Shell commands Bare executor (SCPE)
+- [ ] Shell commands Docker executor (SCPE)
