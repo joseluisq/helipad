@@ -1,6 +1,6 @@
-# Pipelines Executor
+# Helipad - Pipelines
 
-- [x] Shell commands executor (SCE)
-- [ ] Pipelines support via an `executor.toml` support
-- [ ] Shell commands Bare executor (SCPE)
-- [ ] Shell commands Docker executor (SCPE)
+- [x] Commands Executor (CE)
+- [ ] Pipelines support via a `pipeline.toml` support
+- [ ] Host Commands Executor (HCE)
+- [ ] Docker Commands Executor (DCE)

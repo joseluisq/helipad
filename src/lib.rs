@@ -1,13 +1,18 @@
 #![deny(warnings)]
 
-// #[macro_use]
+#[macro_use]
 extern crate anyhow;
+
+#[macro_use]
+extern crate serde;
 
 #[macro_use]
 pub mod result;
 pub mod app;
 pub mod config;
 pub mod exec;
+pub mod helpers;
+pub mod pipeline;
 pub mod shell;
 pub mod step;
 

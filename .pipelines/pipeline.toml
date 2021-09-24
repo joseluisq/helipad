@@ -1,0 +1,39 @@
+kind = "docker"
+name = "development"
+
+[platform]
+os = "linux"
+arch = "amd64"
+
+[[steps]]
+name = "test1"
+# image = "joseluisq/rust-linux-darwin-builder:1.55.0"
+env = { SERVER_1 = "1", SERVER_2 = "2" }
+script = '''
+echo abc
+for i in {1..10}; do echo $i
+sleep 0.025 && echo 000
+done
+echo xyz
+for i in {1..10}; do echo $i
+sleep 0.025 && echo 111
+done
+'''
+
+[[steps]]
+name = "test2"
+# image = "joseluisq/rust-linux-darwin-builder:1.55.0"
+script = [
+    "echo abc",
+    "for i in {1..10}; do echo $i",
+    "sleep 0.025 && echo 000",
+    "done",
+    "echo xyz",
+    "for i in {1..10}; do echo $i",
+    "sleep 0.025 && echo 111",
+    "done"
+]
+
+[trigger]
+event = ["push", "pull_request"]
+branch = ["master", "develop", "feature/*", "bugfix/*", "hotfix/*"]

@@ -1,16 +1,17 @@
 use crate::{Config, Exec, Result, Step};
 use std::collections::HashMap;
 
-pub struct App {
+pub struct Helipad {
     opts: Config,
 }
 
-impl App {
+impl Helipad {
     pub fn new(opts: Config) -> Self {
         Self { opts }
     }
 
-    pub fn run(&self, cmds: &[&str]) -> Result {
+    // TODO: execute steps instead of commands
+    pub fn exec(&self, cmds: &[&str]) -> Result {
         // TODO: read and use options
         let workdir = self.opts.workdir.to_owned();
 
@@ -18,21 +19,12 @@ impl App {
         let mut envs: HashMap<_, _> = std::env::vars().collect();
         envs.insert("FOO".to_owned(), "bar".to_owned());
 
+        // TODO: process steps instead of commands
         let step = Step::new(workdir, envs);
+        let exc = Exec::new();
 
-        // let cmds = &[
-        //     "echo abc",
-        //     "for i in {1..10}; do echo $i",
-        //     "sleep 0.05 && echo 000",
-        //     "done",
-        //     "echo xyz",
-        //     "for i in {1..10}; do echo $i",
-        //     "sleep 0.05 && echo 111",
-        //     "done",
-        // ];
-
-        // TODO:
-        if let Some(lines) = Exec::new().run(step, cmds)? {
+        // TODO: use a closure and pass `res` into it
+        if let Some(lines) = exc.run(step, cmds)? {
             let mut res = vec![];
             let mut n = 0_usize;
             for line in lines {

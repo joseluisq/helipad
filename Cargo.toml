@@ -1,22 +1,24 @@
 [package]
-name = "executor"
+name = "helipad"
 version = "0.1.0"
 edition = "2018"
 
 [[bin]]
-name = "executor"
+name = "helipad"
 path = "src/bin/main.rs"
 
 [lib]
-name = "executor"
+name = "helipad"
 path = "src/lib.rs"
 
 [dependencies]
 anyhow = "1.0"
 duct = "0.13"
-serde_json = "1.0"
 toml = "0.5"
 structopt = { version = "0.3", default-features = false }
+serde = { version = "1.0", default-features = false, features = ["derive"] }
+serde_ignored = "0.1"
+serde_json = "1.0"
 
 [profile.release]
 opt-level = 3
