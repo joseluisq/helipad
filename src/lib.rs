@@ -12,6 +12,7 @@ pub mod app;
 pub mod config;
 pub mod exec;
 pub mod helpers;
+pub mod logger;
 pub mod pipeline;
 pub mod shell;
 pub mod step;
