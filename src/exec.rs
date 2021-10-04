@@ -12,7 +12,7 @@ impl Exec {
         Self {}
     }
 
-    pub fn run(&self, step: Step, cmds: &[&str]) -> Result<Option<Lines<BufReader<ReaderHandle>>>> {
+    pub fn run(&self, step: Step, cmds: &Vec<String>) -> Result<Option<Lines<BufReader<ReaderHandle>>>> {
         if cmds.is_empty() {
             return Ok(None);
         }

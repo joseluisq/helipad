@@ -1,3 +1,4 @@
+use indexmap::IndexMap;
 use serde::Deserialize;
 use std::path::Path;
 
@@ -6,24 +7,53 @@ use crate::result::Result;
 
 #[derive(Deserialize, Serialize, Clone, Debug, Default)]
 #[serde(rename_all = "kebab-case")]
-pub struct TomlPlatform {
+pub struct PipelinePlatform {
     pub os: Option<String>,
     pub arch: Option<String>,
 }
 
-#[derive(Deserialize, Serialize, Clone, Debug)]
-pub struct TomlPipeline {
-    pub kind: String,
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(untagged)]
+/// Holds the env value or script
+pub enum EnvValue {
+    /// The value as string
+    Value(String),
+    /// The value as boolean
+    Boolean(bool),
+    /// The value as number
+    Number(isize),
+    /// The value as a list of strings
+    List(Vec<String>),
+}
+
+#[derive(Deserialize, Serialize, Clone, Debug, Default)]
+#[serde(rename_all = "kebab-case")]
+pub struct PipelineStep {
     pub name: String,
-    // Platform
-    pub platform: Option<TomlPlatform>,
+    pub env: Option<IndexMap<String, EnvValue>>,
+    pub script: Vec<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[serde(rename_all = "kebab-case")]
+pub enum PipelineKind {
+    Docker,
+    Host,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "kebab-case")]
-pub struct TomlManifest {
-    pub pipeline: Option<Box<TomlPipeline>>,
-    pub platform: Option<Box<TomlPipeline>>,
+pub struct Pipeline {
+    // General
+    pub kind: PipelineKind,
+    pub name: String,
+
+    // Platform
+    pub platform: Option<PipelinePlatform>,
+
+    // Steps
+    #[serde(rename(deserialize = "step"))]
+    pub steps: Option<Vec<PipelineStep>>,
 }
 
 pub fn read_file(path: &Path) -> Result<toml::Value> {
