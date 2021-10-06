@@ -6,9 +6,15 @@ name = "development"
 # arch = "amd64"
 
 [[step]]
-name = "test1"
+name = "test0"
 # image = "joseluisq/rust-linux-darwin-builder:1.55.0"
 env = { SERVER_1 = "1", SERVER_2 = "2" }
+script = "uname -a"
+
+[[step]]
+name = "test1"
+# image = "joseluisq/rust-linux-darwin-builder:1.55.0"
+env = { SERVER_3 = "3", SERVER_4 = "4" }
 script = [
     "echo abc",
     "for i in {1..10}; do echo $i",
@@ -23,16 +29,16 @@ script = [
 [[step]]
 name = "test2"
 # image = "joseluisq/rust-linux-darwin-builder:1.55.0"
-script = [
-    "echo abc",
-    "for i in {1..10}; do echo $i",
-    "sleep 0.025 && echo 000",
-    "done",
-    "echo xyz",
-    "for i in {1..10}; do echo $i",
-    "sleep 0.025 && echo 111",
-    "done"
-]
+script = '''
+    echo abc
+    for i in {1..10}; do echo $i
+    sleep 0.025 && echo 000
+    done
+    echo xyz
+    for i in {1..10}; do echo $i
+        sleep 0.025 && echo 111
+    done
+'''
 
 # [trigger]
 # event = ["push", "pull_request"]

@@ -1,6 +1,9 @@
 use std::{collections::HashMap, path::PathBuf};
 
-use crate::{manifest::Pipeline, Exec, Result, Step};
+use crate::{
+    manifest::{Pipeline, ScriptValue},
+    Exec, Result, Step,
+};
 
 pub fn run(pipeline: &Pipeline, workdir: PathBuf) -> Result {
     // Iterate over pipeline steps
@@ -20,7 +23,15 @@ pub fn run(pipeline: &Pipeline, workdir: PathBuf) -> Result {
                 let stepr = Step::new(workdir.to_owned(), envs);
                 let exc = Exec::new();
 
-                let cmds = &step.script;
+                // Parse `script` with its possible values
+                let cmds = match &step.script {
+                    Some(s) => match s {
+                        ScriptValue::SingleLine(s) => vec![s.to_owned()],
+                        ScriptValue::Text(s) => s.to_owned(),
+                    },
+                    None => vec![],
+                };
+
                 println!(r#"Executing step: {}"#, &step.name);
 
                 // TODO: use a closure and pass `res` into it

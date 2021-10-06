@@ -26,12 +26,22 @@ pub enum EnvValue {
     List(Vec<String>),
 }
 
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(untagged)]
+/// Script value
+pub enum ScriptValue {
+    /// The script text as single line
+    SingleLine(String),
+    /// The script text lines
+    Text(Vec<String>),
+}
+
 #[derive(Deserialize, Serialize, Clone, Debug, Default)]
 #[serde(rename_all = "kebab-case")]
 pub struct PipelineStep {
     pub name: String,
     pub env: Option<IndexMap<String, EnvValue>>,
-    pub script: Vec<String>,
+    pub script: Option<ScriptValue>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
