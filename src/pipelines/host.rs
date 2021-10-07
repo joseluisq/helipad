@@ -1,7 +1,7 @@
 use std::{collections::HashMap, path::PathBuf};
 
 use crate::{
-    manifest::{Pipeline, ScriptValue},
+    manifest::{EnvValue, Pipeline, ScriptValue},
     Exec, Result, Step,
 };
 
@@ -15,13 +15,18 @@ pub fn run(pipeline: &Pipeline, workdir: PathBuf) -> Result {
                     bail!("No the current step has an empty name.")
                 }
 
-                // TODO: append custom manifest envs
+                // Append custom manifest envs
                 let mut envs: HashMap<_, _> = std::env::vars().collect();
-                envs.insert("FOO".to_owned(), "bar".to_owned());
-
-                // TODO: process steps instead of commands
-                let stepr = Step::new(workdir.to_owned(), envs);
-                let exc = Exec::new();
+                if let Some(vars) = &step.env {
+                    for (k, v) in vars {
+                        match v {
+                            EnvValue::Value(s) => envs.insert(k.to_owned(), s.to_owned()),
+                            EnvValue::Boolean(b) => envs.insert(k.to_owned(), b.to_string()),
+                            EnvValue::Number(n) => envs.insert(k.to_owned(), n.to_string()),
+                            EnvValue::List(l) => envs.insert(k.to_owned(), l.join(",")),
+                        };
+                    }
+                };
 
                 // Parse `script` with its possible values
                 let cmds = match &step.script {
@@ -34,8 +39,11 @@ pub fn run(pipeline: &Pipeline, workdir: PathBuf) -> Result {
 
                 println!(r#"Executing step: {}"#, &step.name);
 
+                let stepv = Step::new(workdir.to_owned(), envs);
+                let exc = Exec::new();
+
                 // TODO: use a closure and pass `res` into it
-                if let Some(lines) = exc.run(stepr, &cmds)? {
+                if let Some(lines) = exc.run(stepv, &cmds)? {
                     let mut res = vec![];
                     let mut n = 0_usize;
                     for line in lines {

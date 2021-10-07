@@ -1,5 +1,5 @@
-use indexmap::IndexMap;
 use serde::Deserialize;
+use std::collections::HashMap;
 use std::path::Path;
 
 use crate::helpers;
@@ -40,7 +40,7 @@ pub enum ScriptValue {
 #[serde(rename_all = "kebab-case")]
 pub struct PipelineStep {
     pub name: String,
-    pub env: Option<IndexMap<String, EnvValue>>,
+    pub env: Option<HashMap<String, EnvValue>>,
     pub script: Option<ScriptValue>,
 }
 
