@@ -1,11 +1,11 @@
-use std::{collections::HashMap, path::PathBuf};
+use std::{collections::HashMap, path::Path};
 
 use crate::{
     manifest::{EnvValue, Pipeline, ScriptValue},
     Exec, Result, Step,
 };
 
-pub fn run(pipeline: &Pipeline, workdir: PathBuf) -> Result {
+pub fn run(pipeline: &Pipeline, workdir: &Path) -> Result {
     // Iterate over pipeline steps
     match &pipeline.steps {
         Some(steps) => {
@@ -39,7 +39,7 @@ pub fn run(pipeline: &Pipeline, workdir: PathBuf) -> Result {
 
                 println!(r#"Executing step: {}"#, &step.name);
 
-                let stepv = Step::new(workdir.to_owned(), envs);
+                let stepv = Step::new(workdir.to_path_buf(), envs);
                 let exc = Exec::new();
 
                 // TODO: use a closure and pass `res` into it
