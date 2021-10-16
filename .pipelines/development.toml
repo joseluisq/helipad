@@ -1,9 +1,9 @@
 kind = "host"
 name = "development"
 
-# [platform]
-# os = "linux"
-# arch = "amd64"
+[platform]
+os = "linux"
+arch = "amd64"
 
 [[step]]
 name = "test0"

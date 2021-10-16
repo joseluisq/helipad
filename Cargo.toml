@@ -14,14 +14,13 @@ path = "src/lib.rs"
 [dependencies]
 anyhow = "1.0"
 duct = "0.13"
-toml = "0.5"
-structopt = { version = "0.3", default-features = false }
 serde = { version = "1.0", default-features = false, features = ["derive"] }
 serde_ignored = "0.1"
 serde_json = "1.0"
+structopt = { version = "0.3", default-features = false }
+toml = "0.5"
 tracing = "0.1"
 tracing-subscriber = "0.2"
-indexmap = { version = "1.7", features = ["serde-1"] }
 
 [profile.release]
 opt-level = 3

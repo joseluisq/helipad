@@ -3,18 +3,41 @@ use std::collections::HashMap;
 use std::path::Path;
 
 use crate::helpers;
-use crate::result::Result;
+use crate::result::{Context, Result};
 
-#[derive(Deserialize, Serialize, Clone, Debug, Default)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 #[serde(rename_all = "kebab-case")]
-pub struct PipelinePlatform {
-    pub os: Option<String>,
-    pub arch: Option<String>,
+pub enum PipelineKind {
+    Host,
+    Docker,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[serde(rename_all = "kebab-case")]
+pub enum PlatformOs {
+    Linux,
+    Darwin,
+    FreeBSD,
+    Windows,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[serde(rename_all = "kebab-case")]
+pub enum PlatformArch {
+    Amd64,
+    Arm64,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(rename_all = "kebab-case")]
+pub struct PipelinePlatform {
+    pub os: PlatformOs,
+    pub arch: PlatformArch,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(untagged)]
-/// Holds the env value or script
+/// Holds the env value or script.
 pub enum EnvValue {
     /// The value as string
     Value(String),
@@ -26,7 +49,7 @@ pub enum EnvValue {
     List(Vec<String>),
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(untagged)]
 /// Script value
 pub enum ScriptValue {
@@ -36,7 +59,7 @@ pub enum ScriptValue {
     Text(Vec<String>),
 }
 
-#[derive(Deserialize, Serialize, Clone, Debug, Default)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default)]
 #[serde(rename_all = "kebab-case")]
 pub struct PipelineStep {
     pub name: String,
@@ -44,14 +67,7 @@ pub struct PipelineStep {
     pub script: Option<ScriptValue>,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
-#[serde(rename_all = "kebab-case")]
-pub enum PipelineKind {
-    Docker,
-    Host,
-}
-
-#[derive(Debug, Clone, Deserialize, Serialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "kebab-case")]
 pub struct Pipeline {
     // General
@@ -66,8 +82,14 @@ pub struct Pipeline {
     pub steps: Option<Vec<PipelineStep>>,
 }
 
+/// Read a TOML file from path.
 pub fn read_file(path: &Path) -> Result<toml::Value> {
-    let toml_str = helpers::read(path)?;
+    let toml_str = helpers::read(path).with_context(|| {
+        format!(
+            "error trying to deserialize pipeline \"{}\" file toml.",
+            path.display()
+        )
+    })?;
 
     let first_error = match toml_str.parse() {
         Ok(res) => return Ok(res),
@@ -92,5 +114,5 @@ in the future.",
     }
 
     let first_error = anyhow::Error::from(first_error);
-    Err(first_error.context("could not parse input as TOML"))
+    Err(first_error.context("could not parse input as TOML format"))
 }

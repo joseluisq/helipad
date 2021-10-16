@@ -60,7 +60,7 @@ impl Helipad {
                 .with_context(|| "error during pipeline directory reading.")?;
 
             // NOTE: only root level directory scanning
-            for entry in entries {
+            'entries: for entry in entries {
                 let path_resolved = entry
                     .with_context(|| "can not get pipeline path entry.")?
                     .path()
@@ -77,33 +77,57 @@ impl Helipad {
                     continue;
                 }
 
-                let manifest = Helipad::get_manifest(&path_resolved).with_context(|| {
+                let manifest = Helipad::read_manifest(&path_resolved).with_context(|| {
                     format!(
-                        "can not get \"{}\" pipeline manifest file or inaccessible",
-                        pipeline_path.display()
+                        "can not get \"{}\" pipeline manifest file because has invalid format or inaccessible",
+                        path_resolved.display()
                     )
                 })?;
-                pipeline_manifests.push(manifest);
+                if let Some(manifest) = manifest {
+                    // Validate pipeline name
+                    if manifest.name.is_empty() {
+                        bail!(
+                            "pipeline \"{}\" contains not a valid name.",
+                            path_resolved.display()
+                        );
+                    }
+
+                    // Check pipeline duplicate names
+                    for man in &pipeline_manifests {
+                        if man.name == manifest.name {
+                            println!(
+                                "Skipped: pipeline \"{}\" with name \"{}\" already exists.",
+                                path_resolved.display(),
+                                man.name
+                            );
+                            break 'entries;
+                        }
+                    }
+
+                    pipeline_manifests.push(manifest);
+                }
             }
         } else {
             // Or just read the pipeline manifest file and put it in an the array
-            let manifest = Helipad::get_manifest(&pipeline_path).with_context(|| {
+            let manifest = Helipad::read_manifest(&pipeline_path).with_context(|| {
                 format!(
-                    "can not get \"{}\" pipeline manifest file or inaccessible",
+                    "can not get \"{}\" pipeline manifest file because has invalid format or inaccessible",
                     pipeline_path.display()
                 )
             })?;
-            pipeline_manifests.push(manifest);
+            if let Some(manifest) = manifest {
+                pipeline_manifests.push(manifest);
+            }
         }
 
         // Proper iteration over list of manifests
         // TODO: in the future we need to check for certain manifest rules like `events`.
-        // We could also parallelize pipelines based also en some rules.
+        // We could also parallelize pipelines based also on some rules.
         for manifest in &pipeline_manifests {
             match manifest.kind {
                 manifest::PipelineKind::Docker => {
-                    // TODO: Docker is not supported yet
-                    println!("TODO: Docker is not supported yet")
+                    // TODO: Docker pipeline is not supported yet
+                    println!("TODO: Docker pipelines are not supported yet")
                 }
                 manifest::PipelineKind::Host => {
                     pipelines::host::run(manifest, workdir_path.as_path())?
@@ -115,7 +139,13 @@ impl Helipad {
     }
 
     /// Detect and read the pipeline manifest file by path.
-    fn get_manifest(pipeline_file: &Path) -> Result<manifest::Pipeline> {
+    fn read_manifest(pipeline_file: &Path) -> Result<Option<manifest::Pipeline>> {
+        // Validate TOML file extension
+        let ext = pipeline_file.extension();
+        if ext.is_none() || ext.unwrap().is_empty() || ext.unwrap().ne("toml") {
+            return Ok(None);
+        }
+        // TODO: validate minimal pipeline structure of a TOML file
         let toml = manifest::read_file(pipeline_file)?;
         let mut unused = BTreeSet::new();
         let manifest: manifest::Pipeline = serde_ignored::deserialize(toml, |path| {
@@ -123,7 +153,7 @@ impl Helipad {
             helpers::stringify(&mut key, &path);
             unused.insert(key);
         })
-        .with_context(|| "error during pipeline file toml deserialize.")?;
+        .with_context(|| "error during pipeline file toml deserialization.")?;
 
         for key in unused {
             println!(
@@ -132,6 +162,6 @@ impl Helipad {
             );
         }
 
-        Ok(manifest)
+        Ok(Some(manifest))
     }
 }
