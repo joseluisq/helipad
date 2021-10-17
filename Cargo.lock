@@ -81,13 +81,12 @@ dependencies = [
 
 [[package]]
 name = "helipad"
-version = "0.1.0"
+version = "0.0.0"
 dependencies = [
  "anyhow",
  "duct",
  "serde",
  "serde_ignored",
- "serde_json",
  "structopt",
  "toml",
  "tracing",

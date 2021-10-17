@@ -1,6 +1,0 @@
-# Helipad - Pipelines
-
-- [x] Commands Executor (CE)
-- [ ] Pipelines support via a `pipeline.toml` support
-- [ ] Host Commands Executor (HCE)
-- [ ] Docker Commands Executor (DCE)

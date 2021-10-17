@@ -8,7 +8,7 @@ arch = "amd64"
 [[step]]
 name = "prod0"
 env = { SERVER_1 = 1, SERVER_2 = true }
-script = "uname -a && echo $SERVER_1 && echo $SERVER_2"
+script = "pwd && echo $SERVER_1 && echo $SERVER_2"
 
 [[step]]
 name = "prod1"

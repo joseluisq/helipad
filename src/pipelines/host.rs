@@ -62,6 +62,7 @@ pub fn run(pipeline: &Pipeline, workdir: &Path) -> Result {
                         res.push(line);
                     }
 
+                    // TODO: JSON support
                     // println!();
                     // println!("JSON:");
                     // println!("{}", json!(res));
