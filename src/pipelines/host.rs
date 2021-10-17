@@ -9,10 +9,12 @@ pub fn run(pipeline: &Pipeline, workdir: &Path) -> Result {
     // Iterate over pipeline steps
     match &pipeline.steps {
         Some(steps) => {
+            println!(r#"Executing pipeline: {}"#, &pipeline.name);
+
             for step in steps {
-                // TODO: Validate name
+                // TODO: Validate step name
                 if step.name.is_empty() {
-                    bail!("No the current step has an empty name.")
+                    bail!("one step has an empty name.")
                 }
 
                 // Append custom manifest envs
@@ -24,6 +26,13 @@ pub fn run(pipeline: &Pipeline, workdir: &Path) -> Result {
                             EnvValue::Boolean(b) => envs.insert(k.to_owned(), b.to_string()),
                             EnvValue::Number(n) => envs.insert(k.to_owned(), n.to_string()),
                             EnvValue::List(l) => envs.insert(k.to_owned(), l.join(",")),
+                            EnvValue::ListInt(l) => envs.insert(
+                                k.to_owned(),
+                                l.iter()
+                                    .map(ToString::to_string)
+                                    .collect::<Vec<_>>()
+                                    .join(","),
+                            ),
                         };
                     }
                 };

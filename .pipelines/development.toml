@@ -7,13 +7,11 @@ arch = "amd64"
 
 [[step]]
 name = "test0"
-# image = "joseluisq/rust-linux-darwin-builder:1.55.0"
 env = { SERVER_1 = "ONE", SERVER_2 = "TWO" }
 script = "uname -a && echo $SERVER_1 && echo $SERVER_2"
 
 [[step]]
 name = "test1"
-# image = "joseluisq/rust-linux-darwin-builder:1.55.0"
 env = { SERVER_3 = "THREE", SERVER_4 = "FOUR" }
 script = [
     "echo abc",
@@ -30,7 +28,6 @@ script = [
 
 [[step]]
 name = "test2"
-# image = "joseluisq/rust-linux-darwin-builder:1.55.0"
 script = '''
     echo abc
     for i in {1..10}; do echo $i
@@ -38,7 +35,8 @@ script = '''
     done
     echo xyz
     for i in {1..10}; do echo $i
-        sleep 0.025 && echo 111
+        sleep 0.025
+        echo 111
     done
 '''
 

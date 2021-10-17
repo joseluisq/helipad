@@ -146,14 +146,15 @@ impl Helipad {
             return Ok(None);
         }
         // TODO: validate minimal pipeline structure of a TOML file
-        let toml = manifest::read_file(pipeline_file)?;
+        let toml = manifest::read_file(pipeline_file)
+            .with_context(|| "error reading pipeline toml file.")?;
         let mut unused = BTreeSet::new();
         let manifest: manifest::Pipeline = serde_ignored::deserialize(toml, |path| {
             let mut key = String::new();
             helpers::stringify(&mut key, &path);
             unused.insert(key);
         })
-        .with_context(|| "error during pipeline file toml deserialization.")?;
+        .with_context(|| "error during pipeline toml file deserialization.")?;
 
         for key in unused {
             println!(

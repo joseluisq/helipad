@@ -47,6 +47,8 @@ pub enum EnvValue {
     Number(isize),
     /// The value as a list of strings
     List(Vec<String>),
+    /// The value as a list of numbers
+    ListInt(Vec<isize>),
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]

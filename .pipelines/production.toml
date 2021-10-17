@@ -7,14 +7,12 @@ arch = "amd64"
 
 [[step]]
 name = "prod0"
-# image = "joseluisq/rust-linux-darwin-builder:1.55.0"
-env = { SERVER_1 = "prod_ONE", SERVER_2 = "prod_TWO" }
+env = { SERVER_1 = 1, SERVER_2 = true }
 script = "uname -a && echo $SERVER_1 && echo $SERVER_2"
 
 [[step]]
 name = "prod1"
-# image = "joseluisq/rust-linux-darwin-builder:1.55.0"
-env = { SERVER_3 = "prod_THREE", SERVER_4 = "prod_FOUR" }
+env = { SERVER_3 = "prod_THREE", SERVER_4 = [1,2,3,4], SERVER_5 = ["a","b","c"] }
 script = [
     "echo abc",
     "for i in {1..10}; do echo $i",
@@ -26,4 +24,9 @@ script = [
     "done",
     "echo $SERVER_3",
     "echo $SERVER_4",
+    "echo $SERVER_5",
 ]
+
+# [trigger]
+# event = ["push", "pull_request"]
+# branch = ["master", "develop", "feature/*", "bugfix/*", "hotfix/*"]
