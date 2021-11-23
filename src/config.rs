@@ -9,7 +9,7 @@ pub struct Config {
         long,
         short = "c",
         default_value = "pipeline.toml",
-        env = "EXEC_CONFIG"
+        env = "HELIPAD_CONFIG"
     )]
     /// Pipeline configuration directory or file path.
     pub config: PathBuf,

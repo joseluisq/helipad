@@ -7,12 +7,14 @@ use crate::{shell, step::Step, Result};
 
 pub struct Exec {}
 
+/// An executor for a particular step.
 impl Exec {
     pub fn new() -> Self {
         Self {}
     }
 
-    pub fn run(
+    /// Executes a list of commands for a particular step.
+    pub fn execute(
         &self,
         step: Step,
         cmds: &[String],

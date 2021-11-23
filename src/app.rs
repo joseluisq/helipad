@@ -55,7 +55,7 @@ impl Helipad {
         let mut pipeline_manifests: Vec<manifest::Pipeline> = vec![];
 
         if is_dir {
-            // Scan directory, read all pipeline manifests and put them in an the array
+            // Scan directory, read all pipeline manifests and append them into the array
             let entries = std::fs::read_dir(&pipeline_path)
                 .with_context(|| "error during pipeline directory reading.")?;
 
@@ -83,11 +83,12 @@ impl Helipad {
                         path_resolved.display()
                     )
                 })?;
+
                 if let Some(manifest) = manifest {
-                    // Validate pipeline name
+                    // TODO: Proper pipeline name validation
                     if manifest.name.is_empty() {
                         bail!(
-                            "pipeline \"{}\" contains not a valid name.",
+                            "pipeline \"{}\" contains an invalid name.",
                             path_resolved.display()
                         );
                     }
@@ -108,7 +109,7 @@ impl Helipad {
                 }
             }
         } else {
-            // Or just read the pipeline manifest file and put it in an the array
+            // Or just read the pipeline manifest file and append it into the array
             let manifest = Helipad::read_manifest(&pipeline_path).with_context(|| {
                 format!(
                     "can not get \"{}\" pipeline manifest file because has invalid format or inaccessible",
@@ -122,15 +123,15 @@ impl Helipad {
 
         // Proper iteration over list of manifests
         // TODO: in the future we need to check for certain manifest rules like `events`.
-        // We could also parallelize pipelines based also on some rules.
+        //  We could also parallelize pipelines based also on some rules.
         for manifest in &pipeline_manifests {
             match manifest.kind {
+                // TODO: Docker pipeline is not supported yet
                 manifest::PipelineKind::Docker => {
-                    // TODO: Docker pipeline is not supported yet
                     println!("TODO: Docker pipelines are not supported yet")
                 }
                 manifest::PipelineKind::Host => {
-                    pipelines::host::run(manifest, workdir_path.as_path())?
+                    pipelines::host::execute(manifest, workdir_path.as_path())?
                 }
             }
         }
@@ -145,7 +146,8 @@ impl Helipad {
         if ext.is_none() || ext.unwrap().is_empty() || ext.unwrap().ne("toml") {
             return Ok(None);
         }
-        // TODO: validate minimal pipeline structure of a TOML file
+
+        // TODO: validate minimal pipeline structure (TOML file)
         let toml = manifest::read_file(pipeline_file)
             .with_context(|| "error reading pipeline toml file.")?;
         let mut unused = BTreeSet::new();
