@@ -23,12 +23,16 @@ impl Exec {
             return Ok(None);
         }
 
-        let mut cmds = cmd!(
-            shell::BIN,
-            shell::ARGS,
-            format!("{} {}", shell::DEFAULTS, cmds.join(";"))
-        )
-        .dir(step.workdir);
+        let mut args: Vec<String> = shell::ARGS.split(' ').map(ToString::to_string).collect();
+        let cmds_str = format!(
+            "{} {} {}",
+            shell::DEFAULTS_START,
+            cmds.join(";"),
+            shell::DEFAULTS_END
+        );
+        args.push(cmds_str);
+
+        let mut cmds = cmd(shell::BIN, args).dir(step.workdir);
 
         if !step.envs.is_empty() {
             cmds = cmds.full_env(step.envs)

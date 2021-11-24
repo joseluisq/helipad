@@ -1,0 +1,31 @@
+kind = "host"
+name = "windows-production"
+
+[platform]
+os = "windows"
+arch = "amd64"
+
+[[step]]
+name = "prod01"
+env = { SERVER_1 = 1, SERVER_2 = true }
+script = "[environment]::OSVersion.Version"
+
+[[step]]
+name = "prod02"
+env = { SERVER_3 = "prod_THREE", SERVER_4 = [1,2,3,4], SERVER_5 = ["a","b","c"] }
+script = [
+    "dir",
+    "ipconfig",
+]
+
+[[step]]
+name = "prod03"
+env = { SERVER_6 = "My custom server env N 6"}
+script = '''
+    pwd
+    $env:SERVER_6
+'''
+
+# [trigger]
+# event = ["push", "pull_request"]
+# branch = ["master", "develop", "feature/*", "bugfix/*", "hotfix/*"]

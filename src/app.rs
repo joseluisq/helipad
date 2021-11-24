@@ -18,13 +18,13 @@ impl Helipad {
             .with_context(|| "working directory path was not found or inaccessible")?;
 
         // Protect against path/directory traversal
-        let pipeline_path = pipeline_path
-            .canonicalize()
+        let pipeline_path = dunce::canonicalize(pipeline_path)
             .with_context(|| "file or directory pipelines path were not found or inaccessible")?;
 
         if !pipeline_path.starts_with(&workdir_path) {
             bail!(
-                "path {} can not leave current working directory path",
+                "path {} can not leave current working directory {} path",
+                pipeline_path.display(),
                 workdir_path.display()
             );
         }
@@ -61,11 +61,12 @@ impl Helipad {
 
             // NOTE: only root level directory scanning
             'entries: for entry in entries {
-                let path_resolved = entry
-                    .with_context(|| "can not get pipeline path entry.")?
-                    .path()
-                    .canonicalize()
-                    .with_context(|| "error during pipeline path resolving.")?;
+                let path_resolved = dunce::canonicalize(
+                    entry
+                        .with_context(|| "can not get pipeline path entry.")?
+                        .path(),
+                )
+                .with_context(|| "error during pipeline path resolving.")?;
 
                 format!(
                     "can not get \"{}\" pipeline manifest file or inaccessible",
