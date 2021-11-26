@@ -1,5 +1,5 @@
 kind = "host"
-name = "windows-production"
+name = "windows-pipeline"
 
 [platform]
 os = "windows"

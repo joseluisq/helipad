@@ -1,18 +1,18 @@
 kind = "host"
-name = "unix-production"
+name = "linux-pipeline"
 
 [platform]
 os = "linux"
 arch = "amd64"
 
 [[step]]
-name = "prod0"
-env = { SERVER_1 = 1, SERVER_2 = true }
+name = "test0"
+env = { SERVER_1 = "ONE", SERVER_2 = "TWO" }
 script = "pwd && echo $SERVER_1 && echo $SERVER_2"
 
 [[step]]
-name = "prod1"
-env = { SERVER_3 = "prod_THREE", SERVER_4 = [1,2,3,4], SERVER_5 = ["a","b","c"] }
+name = "test1"
+env = { SERVER_3 = "THREE", SERVER_4 = "FOUR" }
 script = [
     "echo abc",
     "for i in {1..10}; do echo $i",
@@ -24,8 +24,23 @@ script = [
     "done",
     "echo $SERVER_3",
     "echo $SERVER_4",
-    "echo $SERVER_5",
 ]
+
+[[step]]
+name = "test2"
+script = '''
+    echo abc
+    for i in {1..10}; do
+        echo $i
+        sleep 0.025 && echo 000
+    done
+    echo xyz
+    for i in {1..10}; do
+        echo $i
+        sleep 0.025
+        echo 111
+    done
+'''
 
 # [trigger]
 # event = ["push", "pull_request"]

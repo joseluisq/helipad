@@ -1,0 +1,40 @@
+kind = "host"
+name = "macos-pipeline"
+
+[platform]
+os = "macos"
+arch = "amd64"
+
+[[step]]
+name = "prod0"
+env = { SERVER_1 = 1, SERVER_2 = true }
+script = '''
+    pwd
+    echo $SERVER_1
+    echo $SERVER_2
+    true
+    sw_vers
+    true
+    sysctl -n machdep.cpu.brand_string
+'''
+
+[[step]]
+name = "prod1"
+env = { SERVER_3 = "prod_THREE", SERVER_4 = [1,2,3,4], SERVER_5 = ["a","b","c"] }
+script = [
+    "echo abc",
+    "for i in {1..10}; do echo $i",
+    "sleep 0.025 && echo 000",
+    "done",
+    "echo xyz",
+    "for i in {1..10}; do echo $i",
+    "sleep 0.025 && echo 111",
+    "done",
+    "echo $SERVER_3",
+    "echo $SERVER_4",
+    "echo $SERVER_5",
+]
+
+# [trigger]
+# event = ["push", "pull_request"]
+# branch = ["master", "develop", "feature/*", "bugfix/*", "hotfix/*"]

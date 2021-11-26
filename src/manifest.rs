@@ -16,8 +16,8 @@ pub enum PipelineKind {
 #[serde(rename_all = "kebab-case")]
 pub enum PlatformOs {
     Linux,
-    Darwin,
-    FreeBSD,
+    Macos,
+    Freebsd,
     Windows,
 }
 
@@ -77,7 +77,7 @@ pub struct Pipeline {
     pub name: String,
 
     // Platform
-    pub platform: Option<PipelinePlatform>,
+    pub platform: PipelinePlatform,
 
     // Steps
     #[serde(rename(deserialize = "step"))]

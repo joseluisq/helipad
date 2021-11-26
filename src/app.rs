@@ -1,3 +1,4 @@
+use std::env::consts::{ARCH, OS};
 use std::{collections::BTreeSet, path::Path, vec};
 
 use crate::{helpers, manifest, pipelines, Config, Context, Result};
@@ -122,16 +123,71 @@ impl Helipad {
             }
         }
 
+        let os_mismatch = |name: &str, os: &str| {
+            println!("WARNING: Skipping pipeline \"{}\" (os={}).", name, os);
+        };
+        let arch_mismatch = |name: &str, arch: &str| {
+            println!("WARNING: Skipping pipeline \"{}\" (arch={}).", name, arch);
+        };
+
         // Proper iteration over list of manifests
         // TODO: in the future we need to check for certain manifest rules like `events`.
         //  We could also parallelize pipelines based also on some rules.
         for manifest in &pipeline_manifests {
+            // Check kind of pipeline
             match manifest.kind {
-                // TODO: Docker pipeline is not supported yet
+                // TODO: Docker pipelines
                 manifest::PipelineKind::Docker => {
-                    println!("TODO: Docker pipelines are not supported yet")
+                    println!("TODO: Docker pipelines are not supported yet.");
+                    continue;
                 }
+
+                // Host Pipelines
                 manifest::PipelineKind::Host => {
+                    // Check platform OS
+                    match manifest.platform.os {
+                        manifest::PlatformOs::Linux => {
+                            if OS != "linux" {
+                                os_mismatch(&manifest.name, "linux");
+                                continue;
+                            }
+                        }
+                        manifest::PlatformOs::Macos => {
+                            if OS != "macos" {
+                                os_mismatch(&manifest.name, "macos");
+                                continue;
+                            }
+                        }
+                        manifest::PlatformOs::Freebsd => {
+                            if OS != "freebsd" {
+                                os_mismatch(&manifest.name, "freebsd");
+                                continue;
+                            }
+                        }
+                        manifest::PlatformOs::Windows => {
+                            if OS != "windows" {
+                                os_mismatch(&manifest.name, "windows");
+                                continue;
+                            }
+                        }
+                    }
+
+                    // Check platform Arch
+                    match manifest.platform.arch {
+                        manifest::PlatformArch::Amd64 => {
+                            if ARCH != "x86_64" {
+                                arch_mismatch(&manifest.name, "amd64");
+                                continue;
+                            }
+                        }
+                        manifest::PlatformArch::Arm64 => {
+                            if ARCH != "aarch64" {
+                                arch_mismatch(&manifest.name, "arm64");
+                                continue;
+                            }
+                        }
+                    }
+
                     pipelines::host::execute(manifest, workdir_path.as_path())?
                 }
             }

@@ -146,14 +146,8 @@ jobs:
     - name: Run unit tests
       if: env.SKIP_TESTS == ''
       run: ${{ env.CARGO }} test --verbose ${{ env.TARGET_FLAGS }}
-
-    - name: Run execution tests (Unix)
-      if: env.SKIP_TESTS == '' && matrix.os != 'windows-2019'
-      run: ${{ env.CARGO }} run -- -c ./.pipelines/unix
-
-    - name: Run execution tests (Windows)
-      if: env.SKIP_TESTS == '' && matrix.os == 'windows-2019'
-      run: ${{ env.CARGO }} run -- -c ./.pipelines/windows
+    - name: Run execution tests
+      run: ${{ env.CARGO }} run -- -c ./.pipelines
 
     # - name: Run build
     #   run: ${{ env.CARGO }} build --verbose ${{ env.TARGET_FLAGS }}
