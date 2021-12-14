@@ -7,9 +7,9 @@
 ## TODO
 
 - [x] Host Commands Executor (HCE)
-- [x] Pipelines/steps/scripts support via [`pipeline.toml`](.pipelines/development.toml) individual file.
-- [x] Pipelines/steps/scripts support via multiple [`.pipelines`](.pipelines/) files.
-- [x] Environment variables support for steps.
+- [x] Pipelines, steps and scripts support via an individual pipeline file. E.g [`pipeline.toml`](.pipelines/development.toml)
+- [x] Pipelines, steps and scripts support via multiple pipeline files. E.g [`.pipelines/`](.pipelines/)
+- [x] Environment variables support for steps
 - [ ] Git source control integration (clone)
 - [ ] HTTP Server
 - [ ] Docker Commands Executor (DCE)
@@ -21,7 +21,7 @@
 
 ## Usage
 
-```sh 
+```sh
 # After a build:
 $ helipad -c ./.pipelines
 
