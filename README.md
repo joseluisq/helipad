@@ -1,31 +1,43 @@
 # Helipad [![CI](https://github.com/joseluisq/helipad/actions/workflows/devel.yml/badge.svg)](https://github.com/joseluisq/helipad/actions/workflows/devel.yml)
 
-> A WIP lightweight and fast CI/CD Server written in Rust.
+> A cross-platform, lightweight and fast CI/CD Server/Client written in Rust (WIP).
 
-**NOTE:** This is a very early **proof of concept** CI/CD Server project yet so any ideas or contributions are welcome.
+**WIP Note:** This is a very early **proof of concept** CI/CD Server/Client project yet so any ideas or contributions are welcome.
+
+## Overview
+
+Unlike the "well-known" variety of software of this kind. The aim of this one in particular is to provide a lean and controlled CI/CD Server/Client regarding features which leverages [Rust power and safety](https://cacm.acm.org/magazines/2021/4/251364-safe-systems-programming-in-rust/fulltext). It means a fast CI/CD Server/Client with lower resource needs and cross-platform.
+
+The project also serves as an excuse to explore new oportunities to improve the software itself and prove Rust safety on this kind of space. Of course learning and fun do not have to be lacking.
+
+If you are interested please don't hesitate to get involved.
 
 ## TODO
 
-- [x] Host Commands Executor (HCE)
-- [x] Pipelines, steps and scripts support via an individual pipeline file. E.g [`pipeline.toml`](.pipelines/development.toml)
+**Note:** This is a non-exhaustive list of features.
+
+- [x] Host Commands Executor (HCE) for pipelines that are executed directly on a Host machine. 
+- [x] Pipelines, steps and scripts support via an individual pipeline file. E.g [`pipeline.linux.toml`](.pipelines/pipeline.linux.toml)
 - [x] Pipelines, steps and scripts support via multiple pipeline files. E.g [`.pipelines/`](.pipelines/)
 - [x] Environment variables support for steps
-- [ ] Git source control integration (clone)
-- [ ] HTTP Server
-- [ ] Docker Commands Executor (DCE)
+- [x] Automatic OS/Arch pipeline detection
+- [ ] Git clone over HTTPS
+- [ ] Git clone over SSH
+- [ ] Cross-platform HTTP Server
 - [ ] Parallel Steps
 - [ ] Parallel Pipelines
 - [ ] Server REST API
-- [ ] HTTP Client
+- [ ] Docker Commands Executor (DCE) for pipelines that are executed using Docker containers.
+- [ ] Cross-platform HTTP Client Service
 - [ ] ???
 
 ## Usage
 
 ```sh
-# After a build:
+# After build Helipad try
 $ helipad -c ./.pipelines
 
-# or via Cargo:
+# or just run it directly via Cargo
 $ cargo run -- -c ./.pipelines
 ```
 
