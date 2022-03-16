@@ -12,6 +12,12 @@ The project also serves as an excuse to explore new oportunities to improve the 
 
 If you are interested please don't hesitate to get involved.
 
+## Example
+
+To see how pipelines are executed, just nagivate to [the `devel` Github Actions workflow](https://github.com/joseluisq/helipad/actions), then pick up whatever Linux, Macos, FreeBSD or Windows job and finally expand the `Run execution tests` step.
+
+Pipeline files can be found under [.pipelines/](./.pipelines) directory.
+
 ## TODO
 
 **Note:** This is a non-exhaustive list of features.
@@ -21,6 +27,7 @@ If you are interested please don't hesitate to get involved.
 - [x] Pipelines, steps and scripts support via multiple pipeline files. E.g [`.pipelines/`](.pipelines/)
 - [x] Environment variables support for steps
 - [x] Automatic OS/Arch pipeline detection
+- [ ] Encrypted secrets
 - [ ] Git clone over HTTPS
 - [ ] Git clone over SSH
 - [ ] Cross-platform HTTP Server
