@@ -5,14 +5,14 @@ use std::path::Path;
 use crate::helpers;
 use crate::result::{Context, Result};
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "kebab-case")]
 pub enum PipelineKind {
     Host,
     Docker,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "kebab-case")]
 pub enum PlatformOs {
     Linux,
@@ -21,7 +21,7 @@ pub enum PlatformOs {
     Windows,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "kebab-case")]
 pub enum PlatformArch {
     Amd64,
