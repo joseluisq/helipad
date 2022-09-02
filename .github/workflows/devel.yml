@@ -46,7 +46,7 @@ jobs:
           # Specific Rust channels
           - build: pinned
             os: ubuntu-20.04
-            rust: 1.61.0
+            rust: 1.63.0
           - build: stable
             os: ubuntu-20.04
             rust: stable
@@ -86,7 +86,7 @@ jobs:
             rust: stable
             target: x86_64-apple-darwin
           - build: macos-arm64
-            os: macos-arm
+            os: macos-11
             rust: stable
             target: aarch64-apple-darwin
           - build: windows-msvc
@@ -122,6 +122,7 @@ jobs:
         echo "CARGO_BIN=cross" >> $GITHUB_ENV
         echo "TARGET_FLAGS=--target ${{ matrix.target }}" >> $GITHUB_ENV
         echo "TARGET_DIR=./target/${{ matrix.target }}" >> $GITHUB_ENV
+
     - name: Cache cargo registry and git trees
       uses: Swatinem/rust-cache@v1
 
@@ -130,26 +131,27 @@ jobs:
         echo "cargo command is: ${{ env.CARGO_BIN }}"
         echo "target flag is: ${{ env.TARGET_FLAGS }}"
         echo "target dir is: ${{ env.TARGET_DIR }}"
+
     - name: aarch64 specific items
       if: matrix.build == 'macos-arm64'
       run: |
         # Can't run tests: cross-compiling
         echo "SKIP_TESTS=yes" >> $GITHUB_ENV
+
     - name: Run unit tests
       if: env.SKIP_TESTS == ''
-      run: ${{ env.CARGO_BIN }} test --verbose ${{ env.TARGET_FLAGS }}
+      run: |
+        ${{ env.CARGO_BIN }} test --verbose ${{ env.TARGET_FLAGS }}
 
     - name: Run build
       run: |
         ${{ env.CARGO_BIN }} clean
         ${{ env.CARGO_BIN }} build --verbose ${{ env.TARGET_FLAGS }}
 
-    - name: Run execution tests (pre)
-      if: matrix.target != ''
-      run: echo "TARGET_FLAGS=" >> $GITHUB_ENV
-
     - name: Run execution tests
-      run: ${{ env.CARGO_BIN }} run -- -c ./.pipelines
+      run: |
+        ${{ env.CARGO_BIN }} clean
+        ${{ env.CARGO_BIN }} run -- -c ./.pipelines
 
   checks:
     name: checks
